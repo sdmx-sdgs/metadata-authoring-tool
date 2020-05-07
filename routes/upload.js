@@ -11,29 +11,25 @@ router.get('/', function(req, res, next) {
     res.send('respond with a resource')
 });
 
-router.post('/', upload.array('file', 10), async (req, res) => {
+router.post('/', upload.single('file'), async (req, res) => {
     try {
-        const indicators = req.files
-        if (!indicators) {
+        const indicator = req.file
+        if (!indicator) {
             res.status(400).send({
                 status: false,
                 data: 'No indicators were sent',
             })
         }
         else {
-            const data = indicators.map(indicator => {
-                console.log(indicator)
-                return {
-                    name: indicator.originalname,
-                    mimetype: indicator.mimetype,
-                    size: indicator.size,
-                }
-            })
+            const input = new WordTemplateInput()
+            input.read(indicator.path)
+                .then(metadata => writeMetadata(metadata, indicator.originalname))
+                .catch(err => res.status(500).send(err))
 
             res.send({
                 status: true,
                 message: 'Indicators were uploaded.',
-                data: data,
+                data: {},
             })
         }
     }
@@ -41,5 +37,10 @@ router.post('/', upload.array('file', 10), async (req, res) => {
         res.status(500).send(err)
     }
 })
+
+function writeMetadata(metadata, filename) {
+    //console.log(metadata)
+    console.log(filename)
+}
 
 module.exports = router
