@@ -24,13 +24,17 @@ router.post('/', upload.single('file'), async (req, res) => {
         else {
             const input = new WordTemplateInput()
             const output = new SdmxOutput()
-            const outputFile = indicator.destination + convertFilename(indicator.originalname)
+            const outputFile = path.join('user_uploads', indicator.filename + '.xml')
             input.read(indicator.path)
                 .then(metadata => output.write(metadata, outputFile))
+                //.then(() => res.download(outputFile))
                 .then(() => res.send({
                     status: true,
-                    message: 'Foobar',
-                    data: outputFile
+                    message: 'Indicator successfully converted.',
+                    data: {
+                        filePath: outputFile,
+                        downloadName: convertFilename(indicator.originalname)
+                    }
                 }))
                 .catch(err => res.status(500).send(err))
         }
