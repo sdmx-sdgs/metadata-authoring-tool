@@ -27,7 +27,6 @@ router.post('/', upload.single('file'), async (req, res) => {
             const outputFile = path.join('user_uploads', indicator.filename + '.xml')
             input.read(indicator.path)
                 .then(metadata => output.write(metadata, outputFile))
-                //.then(() => res.download(outputFile))
                 .then(() => res.send({
                     status: true,
                     message: 'Indicator successfully converted.',
