@@ -1,6 +1,7 @@
+const path = require('path')
 const express = require('express')
 const multer = require('multer')
-const { WordTemplateInput } = require('sdg-metadata-convert')
+const { WordTemplateInput, SdmxOutput } = require('sdg-metadata-convert')
 const router = express.Router()
 
 const upload = multer({
@@ -22,15 +23,16 @@ router.post('/', upload.single('file'), async (req, res) => {
         }
         else {
             const input = new WordTemplateInput()
+            const output = new SdmxOutput()
+            const outputFile = indicator.destination + convertFilename(indicator.originalname)
             input.read(indicator.path)
-                .then(metadata => writeMetadata(metadata, indicator.originalname))
+                .then(metadata => output.write(metadata, outputFile))
+                .then(() => res.send({
+                    status: true,
+                    message: 'Foobar',
+                    data: outputFile
+                }))
                 .catch(err => res.status(500).send(err))
-
-            res.send({
-                status: true,
-                message: 'Indicators were uploaded.',
-                data: {},
-            })
         }
     }
     catch(err) {
@@ -38,9 +40,8 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
 })
 
-function writeMetadata(metadata, filename) {
-    //console.log(metadata)
-    console.log(filename)
+function convertFilename(filename) {
+    return path.basename(filename, '.docx') + '.xml'
 }
 
 module.exports = router
