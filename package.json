@@ -13,6 +13,6 @@
     "morgan": "~1.9.1",
     "multer": "1.4.2",
     "nunjucks": "3.2.1",
-    "sdg-metadata-convert": "github:worldbank/sdg-metadata-convert#0.3.0"
+    "sdg-metadata-convert": "github:brockfanning/sdg-metadata-convert#sdmx-output-fixes"
   }
 }
