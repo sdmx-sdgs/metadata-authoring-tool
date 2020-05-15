@@ -26,7 +26,13 @@ router.post('/', upload.single('file'), async (req, res) => {
         else {
             const input = new WordTemplateInput()
             const sdmxOutput = new SdmxOutput()
-            const pdfOutput = new PdfOutput()
+            const pdfOutput = new PdfOutput({
+                puppeteerLaunchOptions: {
+                    // This is necessary on Heroku.
+                    // @See https://github.com/jontewks/puppeteer-heroku-buildpack
+                    args: ['--no-sandbox']
+                }
+            })
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
             const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
             const zipOutputFile = path.join('user_uploads', indicator.filename + '.zip')
