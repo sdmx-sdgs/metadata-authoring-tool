@@ -1,7 +1,9 @@
 const path = require('path')
+const fs = require('fs')
 const express = require('express')
 const multer = require('multer')
-const { WordTemplateInput, SdmxOutput } = require('sdg-metadata-convert')
+const yazl = require('yazl')
+const { WordTemplateInput, SdmxOutput, PdfOutput } = require('sdg-metadata-convert')
 const router = express.Router()
 
 const upload = multer({
@@ -23,19 +25,27 @@ router.post('/', upload.single('file'), async (req, res) => {
         }
         else {
             const input = new WordTemplateInput()
-            const output = new SdmxOutput()
-            const outputFile = path.join('user_uploads', indicator.filename + '.xml')
+            const sdmxOutput = new SdmxOutput()
+            const pdfOutput = new PdfOutput()
+            const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
+            const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
+            const zipOutputFile = path.join('user_uploads', indicator.filename + '.zip')
             input.read(indicator.path)
-                .then(metadata => output.write(metadata, outputFile))
+                .then(metadata => sdmxOutput.write(metadata, sdmxOutputFile))
+                .then(metadata => pdfOutput.write(metadata, pdfOutputFile))
+                .then(() => zipOutputFiles(sdmxOutputFile, pdfOutputFile, zipOutputFile, indicator.originalname))
                 .then(() => res.send({
                     status: true,
                     message: 'Indicator successfully converted.',
                     data: {
-                        filePath: outputFile,
-                        downloadName: convertFilename(indicator.originalname)
+                        filePath: zipOutputFile,
+                        downloadName: convertFilename(indicator.originalname, '.zip')
                     }
                 }))
-                .catch(err => res.status(500).send(err))
+                .catch(err => {
+                    console.log(err)
+                    res.status(500).send(err)
+                })
         }
     }
     catch(err) {
@@ -43,8 +53,21 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
 })
 
-function convertFilename(filename) {
-    return path.basename(filename, '.docx') + '.xml'
+function convertFilename(filename, newExtension) {
+    return path.basename(filename, '.docx') + newExtension
+}
+
+function zipOutputFiles(sdmxFilePath, pdfFilePath, zipFilePath, originalFilename) {
+    return new Promise((resolve, reject) => {
+        const zipfile = new yazl.ZipFile()
+        const writeStream = fs.createWriteStream(zipFilePath)
+        zipfile.addFile(sdmxFilePath, convertFilename(originalFilename, '.xml'))
+        zipfile.addFile(pdfFilePath, convertFilename(originalFilename, '.pdf'))
+        zipfile.outputStream.pipe(writeStream).on('close', () => {
+            resolve('Success')
+        })
+        zipfile.end()
+    })
 }
 
 module.exports = router
