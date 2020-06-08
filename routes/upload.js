@@ -36,16 +36,21 @@ router.post('/', upload.single('file'), async (req, res) => {
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
             const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
             const zipOutputFile = path.join('user_uploads', indicator.filename + '.zip')
+            let messages
             input.read(indicator.path)
                 .then(metadata => sdmxOutput.write(metadata, sdmxOutputFile))
                 .then(metadata => pdfOutput.write(metadata, pdfOutputFile))
-                .then(() => zipOutputFiles(sdmxOutputFile, pdfOutputFile, zipOutputFile, indicator.originalname))
+                .then(metadata => {
+                    messages = metadata.getMessages()
+                    return zipOutputFiles(sdmxOutputFile, pdfOutputFile, zipOutputFile, indicator.originalname)
+                })
                 .then(() => res.send({
                     status: true,
                     message: 'Indicator successfully converted.',
                     data: {
                         filePath: zipOutputFile,
-                        downloadName: convertFilename(indicator.originalname, '.zip')
+                        downloadName: convertFilename(indicator.originalname, '.zip'),
+                        warnings: messages,
                     }
                 }))
                 .catch(err => {
