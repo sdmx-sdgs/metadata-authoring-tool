@@ -1,4 +1,4 @@
-# sdg-metadata-sdmx
+# metadata-authoring-tool
 
 This is a tool for converting Word templates containing SDG indicator metadata into two files:
 
