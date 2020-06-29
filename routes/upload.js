@@ -65,7 +65,8 @@ router.post('/', upload.single('file'), async (req, res) => {
 })
 
 function convertFilename(filename, newExtension) {
-    return path.basename(filename, '.docx') + newExtension
+    const oldExtension = path.extname(filename)
+    return path.basename(filename, oldExtension) + newExtension
 }
 
 function zipOutputFiles(sdmxFilePath, pdfFilePath, zipFilePath, originalFilename) {
