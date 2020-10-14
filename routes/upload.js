@@ -27,6 +27,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             const input = new WordTemplateInput()
             const sdmxOutput = new SdmxOutput()
             const pdfOutput = new PdfOutput({
+                conceptNames: true,
                 puppeteerLaunchOptions: {
                     // This is necessary on Heroku.
                     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
