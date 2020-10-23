@@ -10,6 +10,12 @@ const upload = multer({
     dest: 'user_uploads/'
 })
 
+const puppeteerLaunchOptions = {
+    // This is necessary on Heroku.
+    // @See https://github.com/jontewks/puppeteer-heroku-buildpack
+    args: ['--no-sandbox'],
+}
+
 router.get('/', function(req, res, next) {
     res.send('respond with a resource')
 });
@@ -28,11 +34,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             const sdmxOutput = new SdmxOutput()
             const pdfOutput = new PdfOutput({
                 conceptNames: true,
-                puppeteerLaunchOptions: {
-                    // This is necessary on Heroku.
-                    // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-                    args: ['--no-sandbox']
-                }
+                puppeteerLaunchOptions: puppeteerLaunchOptions,
             })
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
             const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
@@ -85,8 +87,8 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
     const sdmxInput = new SdmxInput()
     try {
         const diff = await sdmxInput.compareWithOldVersion(oldSource, newMeta)
-        await diff.writeSourcePdf(sourceFile)
-        await diff.writeRenderedPdf(renderedFile)
+        await diff.writeSourcePdf(sourceFile, undefined, puppeteerLaunchOptions)
+        await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
     }
     catch (e) {
         throw e
