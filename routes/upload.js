@@ -50,7 +50,7 @@ router.post('/', upload.single('file'), async (req, res) => {
                     messages = metadata.getMessages()
                     return createComparisonFiles(metadata, sourceComparisonFile, renderedComparisonFile)
                 })
-                .then(() => zipOutputFiles(sdmxOutputFile, pdfOutputFile, sourceComparisonFile, renderedComparisonFile, zipOutputFile, sourceindicator.originalname))
+                .then(() => zipOutputFiles(sdmxOutputFile, pdfOutputFile, sourceComparisonFile, renderedComparisonFile, zipOutputFile, indicator.originalname))
                 .then(() => res.send({
                     status: true,
                     message: 'Indicator successfully converted.',
