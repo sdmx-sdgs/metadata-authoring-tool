@@ -45,7 +45,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             let messages
             input.read(indicator.path)
                 .then(metadata => sdmxOutput.write(metadata, sdmxOutputFile))
-                //.then(metadata => pdfOutput.write(metadata, pdfOutputFile))
+                .then(metadata => pdfOutput.write(metadata, pdfOutputFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
                     return createComparisonFiles(metadata, sourceComparisonFile, renderedComparisonFile)
