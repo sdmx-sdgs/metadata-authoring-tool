@@ -31,15 +31,7 @@ router.post('/', upload.single('file'), async (req, res) => {
                 puppeteerLaunchOptions: {
                     // This is necessary on Heroku.
                     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-                    args: [
-                        '--no-sandbox',
-                        '--disable-gpu',
-                        '--disable-dev-shm-usage',
-                        '--disable-setuid-sandbox',
-                        '--no-first-run',
-                        '--no-zygote',
-                        '--single-process',
-                    ]
+                    args: ['--no-sandbox']
                 }
             })
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
@@ -97,8 +89,6 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
         await diff.writeRenderedPdf(renderedFile)
     }
     catch (e) {
-        //throw 'Foobar'
-        console.log('about to throw exception')
         throw e
     }
 }
