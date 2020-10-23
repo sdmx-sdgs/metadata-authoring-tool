@@ -1,8 +1,8 @@
 if (Dropzone) {
     Dropzone.options.uploadWidget = {
-        acceptedFiles: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-word.document.macroEnabled.12',
-        dictDefaultMessage: 'Drop your metadata file (docx/docm) here, or click to browse.',
-        dictInvalidFileType: 'This file is not a Word document (docx/docm).',
+        acceptedFiles: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-word.document.macroEnabled.12,text/xml,application/xml',
+        dictDefaultMessage: 'Drop your metadata file (docx/docm/xml) here, or click to browse.',
+        dictInvalidFileType: 'This file is not a Word or SDMX document (docx/docm/xml).',
         init: function() {
             this.on('success', function(file, resp) {
                 if (resp.data.warnings.length) {

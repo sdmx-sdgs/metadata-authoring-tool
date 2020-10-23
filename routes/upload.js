@@ -30,7 +30,8 @@ router.post('/', upload.single('file'), async (req, res) => {
             })
         }
         else {
-            const input = new WordTemplateInput()
+            const isXml = indicator.mimetype === 'text/xml' || indicator.mimetype === 'application/xml'
+            const input = isXml ? new SdmxInput() : new WordTemplateInput()
             const sdmxOutput = new SdmxOutput()
             const pdfOutput = new PdfOutput({
                 conceptNames: true,
@@ -91,7 +92,7 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
         await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
     }
     catch (e) {
-        throw e
+        throw e.message
     }
 }
 
