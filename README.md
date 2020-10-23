@@ -8,3 +8,12 @@ This is a tool for converting Word templates containing SDG indicator metadata i
 ## Demo
 
 https://sdg-metadata-sdmx.herokuapp.com/
+
+## Local development
+
+```
+npm install
+npm start
+```
+
+Visit http://localhost:3000 in your browser.
