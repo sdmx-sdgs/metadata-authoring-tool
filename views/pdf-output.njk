@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ SDG_INDICATOR.value | striptags }}</title>
+        <style>
+            body {
+                font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+            }
+            h1 {
+                border-bottom: 2px solid #BBB;
+                padding-bottom: 10px;
+            }
+            table {
+                border-collapse: collapse;
+            }
+            table, th, td {
+                border: 1px solid black;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+            }
+            img {
+                max-width: 100%;
+            }
+            .footnotes {
+                border-top: 1px solid #BBB;
+                border-bottom: 1px solid #BBB;
+                margin: 25px 0 0 0;
+                padding: 15px 15px 10px 25px;
+                font-size: 13px;
+                list-style-type: none;
+            }
+            .footnotes li p:first-of-type {
+                margin-top: 0;
+                padding-top: 0;
+            }
+            .footnote-number {
+                float: left;
+                margin-right: 5px;
+                margin-left: -11px;
+            }
+            header h1 {
+                color: rgb(28, 117, 188);
+                font-size: 18pt;
+                border-bottom: none;
+                padding-bottom: 0;
+                text-align: center;
+            }
+            .concept-name {
+                color: rgb(28, 117, 188);
+                font-size: 18pt;
+                border-bottom: 1.5pt solid rgb(221,221,221);
+                padding-bottom: 4pt;
+            }
+            header p {
+                color: rgb(74, 74, 74);
+                font-size: 10.5pt;
+                text-align: center;
+            }
+            .concept-name:first-child {
+                margin-top: 0;
+                padding-top: 20px;
+            }
+            #SDG_INDICATOR_INFO,
+            #SDG_GOAL,
+            #SDG_TARGET,
+            #SDG_INDICATOR,
+            #SDG_SERIES_DESCR,
+            #META_LAST_UPDATE,
+            #SDG_RELATED_INDICATORS,
+            #SDG_CUSTODIAN_AGENCIES {
+                background-color: rgb(245, 245, 245);
+            }
+            #SDG_INDICATOR_INFO p:last-child,
+            #SDG_GOAL p:last-child,
+            #SDG_TARGET p:last-child,
+            #SDG_INDICATOR p:last-child,
+            #SDG_SERIES_DESCR p:last-child,
+            #META_LAST_UPDATE p:last-child,
+            #SDG_RELATED_INDICATORS p:last-child,
+            #SDG_CUSTODIAN_AGENCIES p:last-child {
+                margin-bottom: 0;
+                padding-bottom: 10px;
+            }
+        </style>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body>
+        {% macro renderConcept(concept) %}
+        {% if concept.value %}
+            <div id="{{ concept.id }}">
+            {% if conceptNames %}<p class="concept-name">{{ concept.name }}</p>{% endif %}
+            {{ concept.value }}
+            </div>
+        {% endif %}
+        {% endmacro %}
+
+        <header>
+            <h1>SDG indicator metadata</h1>
+            <p>(Harmonized template - format 1.0)</p>
+        </header>
+
+        {{ renderConcept(SDG_INDICATOR_INFO) }}
+        {{ renderConcept(SDG_GOAL) }}
+        {{ renderConcept(SDG_TARGET) }}
+        {{ renderConcept(SDG_INDICATOR) }}
+        {{ renderConcept(SDG_SERIES_DESCR) }}
+        {{ renderConcept(META_LAST_UPDATE) }}
+        {{ renderConcept(SDG_RELATED_INDICATORS) }}
+        {{ renderConcept(SDG_CUSTODIAN_AGENCIES) }}
+        {{ renderConcept(CONTACT) }}
+        {{ renderConcept(CONTACT_ORGANISATION) }}
+        {{ renderConcept(CONTACT_NAME) }}
+        {{ renderConcept(ORGANISATION_UNIT) }}
+        {{ renderConcept(CONTACT_FUNCT) }}
+        {{ renderConcept(CONTACT_PHONE) }}
+        {{ renderConcept(CONTACT_MAIL) }}
+        {{ renderConcept(CONTACT_EMAIL) }}
+        {{ renderConcept(IND_DEF_CON_CLASS) }}
+        {{ renderConcept(STAT_CONC_DEF) }}
+        {{ renderConcept(UNIT_MEASURE) }}
+        {{ renderConcept(CLASS_SYSTEM) }}
+        {{ renderConcept(SRC_TYPE_COLL_METHOD) }}
+        {{ renderConcept(SOURCE_TYPE) }}
+        {{ renderConcept(COLL_METHOD) }}
+        {{ renderConcept(FREQ_COLL) }}
+        {{ renderConcept(REL_CAL_POLICY) }}
+        {{ renderConcept(DATA_SOURCE) }}
+        {{ renderConcept(COMPILING_ORG) }}
+        {{ renderConcept(INST_MANDATE) }}
+        {{ renderConcept(OTHER_METHOD) }}
+        {{ renderConcept(RATIONALE) }}
+        {{ renderConcept(REC_USE_LIM) }}
+        {{ renderConcept(DATA_COMP) }}
+        {{ renderConcept(DATA_VALIDATION) }}
+        {{ renderConcept(ADJUSTMENT) }}
+        {{ renderConcept(IMPUTATION) }}
+        {{ renderConcept(REG_AGG) }}
+        {{ renderConcept(DOC_METHOD) }}
+        {{ renderConcept(QUALITY_MGMNT) }}
+        {{ renderConcept(QUALITY_ASSURE) }}
+        {{ renderConcept(QUALITY_ASSMNT) }}
+        {{ renderConcept(SDG_QA_CONSULT) }}
+        {{ renderConcept(COVERAGE) }}
+        {{ renderConcept(COMPARABILITY) }}
+        {{ renderConcept(OTHER_DOC) }}
+
+    </body>
+</html>

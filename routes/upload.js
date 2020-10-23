@@ -36,6 +36,8 @@ router.post('/', upload.single('file'), async (req, res) => {
             const pdfOutput = new PdfOutput({
                 conceptNames: true,
                 puppeteerLaunchOptions: puppeteerLaunchOptions,
+                layoutFolder: path.join(__dirname, '..', 'views'),
+                layout: 'pdf-output.njk',
             })
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
             const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
