@@ -14,7 +14,7 @@ const puppeteerLaunchOptions = {
     timeout: 90000,
     // This is necessary on Heroku.
     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-    args: ['--no-sandbox'],
+    args: ['--no-sandbox', '--timeout=90000'],
 }
 
 router.get('/', function(req, res, next) {
