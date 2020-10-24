@@ -11,6 +11,7 @@ const upload = multer({
 })
 
 const puppeteerLaunchOptions = {
+    timeout: 90000,
     // This is necessary on Heroku.
     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
     args: ['--no-sandbox'],
