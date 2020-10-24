@@ -11,10 +11,14 @@ const upload = multer({
 })
 
 const puppeteerLaunchOptions = {
-    timeout: 90000,
+    //timeout: 90000,
+    headless: true,
     // This is necessary on Heroku.
     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-    args: ['--no-sandbox', '--timeout=90000'],
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+    ],
 }
 
 router.get('/', function(req, res, next) {
@@ -96,7 +100,9 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
         await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
     }
     catch (e) {
-        throw e.message
+        //throw e.message
+        console.log('Unable to generate comparison report.')
+        console.log(e.message)
     }
 }
 
