@@ -11,14 +11,9 @@ const upload = multer({
 })
 
 const puppeteerLaunchOptions = {
-    timeout: 90000,
-    headless: true,
     // This is necessary on Heroku.
     // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-    args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-    ],
+    args: ['--no-sandbox'],
 }
 
 router.get('/', function(req, res, next) {
@@ -48,7 +43,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
             const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
             const zipOutputFile = path.join('user_uploads', indicator.filename + '.zip')
-            const sourceComparisonFile = path.join('user_uploads', indicator.filename + '-source-comparison.pdf')
+            const sourceComparisonFile = path.join('user_uploads', indicator.filename + '-source-comparison.html')
             const renderedComparisonFile = path.join('user_uploads', indicator.filename + '-rendered-comparison.pdf')
 
             let messages
@@ -96,7 +91,7 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
     const sdmxInput = new SdmxInput()
     try {
         const diff = await sdmxInput.compareWithOldVersion(oldSource, newMeta)
-        await diff.writeSourcePdf(sourceFile, undefined, puppeteerLaunchOptions)
+        await diff.writeSourceHtml(sourceFile, undefined, puppeteerLaunchOptions)
         await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
     }
     catch (e) {
@@ -122,7 +117,7 @@ function zipOutputFiles(sdmxFilePath, pdfFilePath, sourceComparisonFile, rendere
             zipfile.addFile(pdfFilePath, convertFilename(originalFilename, '.pdf'))
         }
         if (fs.existsSync(sourceComparisonFile)) {
-            zipfile.addFile(sourceComparisonFile, convertFilename(originalFilename, '-source-comparison.pdf'))
+            zipfile.addFile(sourceComparisonFile, convertFilename(originalFilename, '-source-comparison.html'))
         }
         if (fs.existsSync(renderedComparisonFile)) {
             zipfile.addFile(renderedComparisonFile, convertFilename(originalFilename, '-rendered-comparison.pdf'))
