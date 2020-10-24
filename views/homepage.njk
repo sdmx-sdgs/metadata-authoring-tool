@@ -7,6 +7,10 @@
 {% block main %}
 <form id="upload-widget" action="/upload" class="dropzone"></form>
 
+<div id="processing" role="status" style="display:none;">
+    <span>Processing, please wait...</span>
+    <span class="spinner"></span>
+</div>
 <div id="warnings"></div>
 {% endblock %}
 

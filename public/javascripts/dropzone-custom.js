@@ -1,9 +1,12 @@
 if (Dropzone) {
     Dropzone.options.uploadWidget = {
+        timeout: 90000,
         acceptedFiles: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-word.document.macroEnabled.12,text/xml,application/xml',
         dictDefaultMessage: 'Drop your metadata file (docx/docm/xml) here, or click to browse.',
         dictInvalidFileType: 'This file is not a Word or SDMX document (docx/docm/xml).',
         init: function() {
+            this.on('processing', showProcessingMessage);
+            this.on('complete', hideProcessingMessage);
             this.on('success', function(file, resp) {
                 if (resp.data.warnings.length) {
                     displayWarnings(resp.data.downloadName, resp.data.warnings);
@@ -40,4 +43,12 @@ function displayWarnings(filename, warnings) {
     var container = document.getElementById('warnings');
     container.insertBefore(list, container.firstChild);
     container.insertBefore(heading, container.firstChild);
+}
+
+function showProcessingMessage() {
+    document.getElementById('processing').style.display = 'block';
+}
+
+function hideProcessingMessage() {
+    document.getElementById('processing').style.display = 'none';
 }
