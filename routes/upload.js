@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
+    res.setTimeout(90000)
     try {
         const indicator = req.file
         if (!indicator) {
