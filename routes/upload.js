@@ -97,7 +97,7 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
     try {
         const diff = await sdmxInput.compareWithOldVersion(oldSource, newMeta)
         await diff.writeSourceHtml(sourceFile, undefined, puppeteerLaunchOptions)
-        await diff.writeRenderedHtml(renderedFile, undefined, puppeteerLaunchOptions)
+        await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
     }
     catch (e) {
         //throw e.message
