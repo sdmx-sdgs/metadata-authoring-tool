@@ -4,8 +4,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.7.0/dist/min/dropzone.min.css">
 {% endblock %}
 
+{% block navigation %}
+    {% if action != '/convert' %}
+        <a href="/">SDMX converter</a>
+    {% else %}
+        <span>SDMX converter</span>
+    {% endif %}
+    {% if action != '/compare' %}
+        <a href="/comparison">Comparison report</a>
+    {% else %}
+        <span>Comparison report</span>
+    {% endif %}
+{% endblock %}
+
 {% block main %}
-<form id="upload-widget" action="/upload" class="dropzone"></form>
+<p class="lead-copy">{{ introduction | safe }}</p>
+<form id="upload-widget" action="{{ action }}" class="dropzone"></form>
 
 <div id="processing" role="status" style="display:none;">
     <span>Processing, please wait...</span>
