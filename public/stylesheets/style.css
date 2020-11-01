@@ -21,3 +21,14 @@ body {
 @-webkit-keyframes spin {
   to { -webkit-transform: rotate(360deg); }
 }
+
+nav a, nav span {
+  padding: 20px 20px 20px 0;
+  display: inline-block;
+}
+nav a {
+  text-decoration: underline;
+}
+.lead-copy {
+  font-size: 1.5em;
+}
