@@ -33,31 +33,23 @@ router.post('/', upload.single('file'), async (req, res) => {
         else {
             const isXml = indicator.mimetype === 'text/xml' || indicator.mimetype === 'application/xml'
             const input = isXml ? new SdmxInput() : new WordTemplateInput()
-            const sdmxOutput = new SdmxOutput()
-            const pdfOutput = new PdfOutput({
-                conceptNames: true,
-                puppeteerLaunchOptions: puppeteerLaunchOptions,
-                layoutFolder: path.join(__dirname, '..', 'views'),
-                layout: 'pdf-output.njk',
-            })
-            const sdmxOutputFile = path.join('user_uploads', indicator.filename + '.xml')
-            const pdfOutputFile = path.join('user_uploads', indicator.filename + '.pdf')
-            const zipOutputFile = path.join('user_uploads', indicator.filename + '.zip')
+            const zipOutputFile = path.join('user_uploads', indicator.filename + '-comparison.zip')
+            const sourceComparisonFile = path.join('user_uploads', indicator.filename + '-source-comparison.html')
+            const renderedComparisonFile = path.join('user_uploads', indicator.filename + '-rendered-comparison.pdf')
 
             let messages
             input.read(indicator.path)
-                .then(metadata => sdmxOutput.write(metadata, sdmxOutputFile))
-                .then(metadata => pdfOutput.write(metadata, pdfOutputFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
-                    return zipOutputFiles(sdmxOutputFile, pdfOutputFile, zipOutputFile, indicator.originalname)
+                    return createComparisonFiles(metadata, sourceComparisonFile, renderedComparisonFile)
                 })
+                .then(() => zipOutputFiles(sourceComparisonFile, renderedComparisonFile, zipOutputFile, indicator.originalname))
                 .then(() => res.send({
                     status: true,
-                    message: 'Indicator successfully converted.',
+                    message: 'Comparison successfully generated.',
                     data: {
                         filePath: zipOutputFile,
-                        downloadName: convertFilename(indicator.originalname, '.zip'),
+                        downloadName: convertFilename(indicator.originalname, '-comparison.zip'),
                         warnings: messages,
                     }
                 }))
@@ -72,20 +64,46 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
 })
 
+async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
+    let oldSource = 'https://unstats.un.org/SDGMetadataAPI/api/Metadata/SDMXReport/'
+
+    const reportingType = newMeta.getDescriptor('REPORTING_TYPE')
+    const refArea = newMeta.getDescriptor('REF_AREA')
+    // For now we compare only the first series, if there are multiple.
+    let series = newMeta.getDescriptor('SERIES')
+    if (Array.isArray(series)) {
+        series = series[0]
+    }
+
+    oldSource += [reportingType, series, refArea].join('.')
+
+    const sdmxInput = new SdmxInput()
+    try {
+        const diff = await sdmxInput.compareWithOldVersion(oldSource, newMeta)
+        await diff.writeSourceHtml(sourceFile, undefined, puppeteerLaunchOptions)
+        await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
+    }
+    catch (e) {
+        //throw e.message
+        console.log('Unable to generate comparison report.')
+        console.log(e.message)
+    }
+}
+
 function convertFilename(filename, newExtension) {
     const oldExtension = path.extname(filename)
     return path.basename(filename, oldExtension) + newExtension
 }
 
-function zipOutputFiles(sdmxFilePath, pdfFilePath, zipFilePath, originalFilename) {
+function zipOutputFiles(sourceComparisonFile, renderedComparisonFile, zipFilePath, originalFilename) {
     return new Promise((resolve, reject) => {
         const zipfile = new yazl.ZipFile()
         const writeStream = fs.createWriteStream(zipFilePath)
-        if (fs.existsSync(sdmxFilePath)) {
-            zipfile.addFile(sdmxFilePath, convertFilename(originalFilename, '.xml'))
+        if (fs.existsSync(sourceComparisonFile)) {
+            zipfile.addFile(sourceComparisonFile, convertFilename(originalFilename, '-source-comparison.html'))
         }
-        if (fs.existsSync(pdfFilePath)) {
-            zipfile.addFile(pdfFilePath, convertFilename(originalFilename, '.pdf'))
+        if (fs.existsSync(renderedComparisonFile)) {
+            zipfile.addFile(renderedComparisonFile, convertFilename(originalFilename, '-rendered-comparison.pdf'))
         }
         zipfile.outputStream.pipe(writeStream).on('close', () => {
             resolve('Success')
