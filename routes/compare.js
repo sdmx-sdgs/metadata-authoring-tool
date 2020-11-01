@@ -1,24 +1,13 @@
 const path = require('path')
-const fs = require('fs')
 const express = require('express')
 const multer = require('multer')
-const yazl = require('yazl')
-const { WordTemplateInput, SdmxOutput, PdfOutput, SdmxInput } = require('sdg-metadata-convert')
+const { WordTemplateInput, SdmxInput } = require('sdg-metadata-convert')
 const router = express.Router()
+const helpers = require('../lib/helpers')
 
 const upload = multer({
     dest: 'user_uploads/'
 })
-
-const puppeteerLaunchOptions = {
-    // This is necessary on Heroku.
-    // @See https://github.com/jontewks/puppeteer-heroku-buildpack
-    args: ['--no-sandbox'],
-}
-
-router.get('/', function(req, res, next) {
-    res.send('respond with a resource')
-});
 
 router.post('/', upload.single('file'), async (req, res) => {
     res.setTimeout(90000)
@@ -33,23 +22,35 @@ router.post('/', upload.single('file'), async (req, res) => {
         else {
             const isXml = indicator.mimetype === 'text/xml' || indicator.mimetype === 'application/xml'
             const input = isXml ? new SdmxInput() : new WordTemplateInput()
-            const zipOutputFile = path.join('user_uploads', indicator.filename + '-comparison.zip')
-            const sourceComparisonFile = path.join('user_uploads', indicator.filename + '-source-comparison.html')
-            const renderedComparisonFile = path.join('user_uploads', indicator.filename + '-rendered-comparison.pdf')
+            const zipTempFile = path.join('user_uploads', indicator.filename + '-comparison.zip')
+            const zipDestFile = helpers.convertFilename(indicator.originalname, '-comparison.zip')
+            const sourceTempFile = path.join('user_uploads', indicator.filename + '-source-comparison.html')
+            const sourceDestFile = helpers.convertFilename(indicator.originalname, '-source-comparison.html')
+            const renderedTempFile = path.join('user_uploads', indicator.filename + '-rendered-comparison.pdf')
+            const renderedDestFile = helpers.convertFilename(indicator.originalname, '-rendered-comparison.pdf')
 
             let messages
             input.read(indicator.path)
                 .then(metadata => {
                     messages = metadata.getMessages()
-                    return createComparisonFiles(metadata, sourceComparisonFile, renderedComparisonFile)
+                    return createComparisonFiles(metadata, sourceTempFile, renderedTempFile)
                 })
-                .then(() => zipOutputFiles(sourceComparisonFile, renderedComparisonFile, zipOutputFile, indicator.originalname))
+                .then(() => helpers.zipOutputFiles(zipTempFile, [
+                    {
+                        from: sourceTempFile,
+                        to: sourceDestFile,
+                    },
+                    {
+                        from: renderedTempFile,
+                        to: renderedDestFile,
+                    }
+                ]))
                 .then(() => res.send({
                     status: true,
                     message: 'Comparison successfully generated.',
                     data: {
-                        filePath: zipOutputFile,
-                        downloadName: convertFilename(indicator.originalname, '-comparison.zip'),
+                        filePath: zipTempFile,
+                        downloadName: zipDestFile,
                         warnings: messages,
                     }
                 }))
@@ -80,36 +81,14 @@ async function createComparisonFiles(newMeta, sourceFile, renderedFile) {
     const sdmxInput = new SdmxInput()
     try {
         const diff = await sdmxInput.compareWithOldVersion(oldSource, newMeta)
-        await diff.writeSourceHtml(sourceFile, undefined, puppeteerLaunchOptions)
-        await diff.writeRenderedPdf(renderedFile, undefined, puppeteerLaunchOptions)
+        await diff.writeSourceHtml(sourceFile, undefined, helpers.getPuppeteerLaunchOptions())
+        await diff.writeRenderedPdf(renderedFile, undefined, helpers.getPuppeteerLaunchOptions())
     }
     catch (e) {
         //throw e.message
         console.log('Unable to generate comparison report.')
         console.log(e.message)
     }
-}
-
-function convertFilename(filename, newExtension) {
-    const oldExtension = path.extname(filename)
-    return path.basename(filename, oldExtension) + newExtension
-}
-
-function zipOutputFiles(sourceComparisonFile, renderedComparisonFile, zipFilePath, originalFilename) {
-    return new Promise((resolve, reject) => {
-        const zipfile = new yazl.ZipFile()
-        const writeStream = fs.createWriteStream(zipFilePath)
-        if (fs.existsSync(sourceComparisonFile)) {
-            zipfile.addFile(sourceComparisonFile, convertFilename(originalFilename, '-source-comparison.html'))
-        }
-        if (fs.existsSync(renderedComparisonFile)) {
-            zipfile.addFile(renderedComparisonFile, convertFilename(originalFilename, '-rendered-comparison.pdf'))
-        }
-        zipfile.outputStream.pipe(writeStream).on('close', () => {
-            resolve('Success')
-        })
-        zipfile.end()
-    })
 }
 
 module.exports = router

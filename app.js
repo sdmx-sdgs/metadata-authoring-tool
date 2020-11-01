@@ -5,7 +5,8 @@ const logger = require('morgan')
 const nunjucks = require('nunjucks')
 
 const indexRouter = require('./routes/index')
-const uploadRouter = require('./routes/upload')
+const comparisonRouter = require('./routes/comparison')
+const convertRouter = require('./routes/convert')
 const compareRouter = require('./routes/compare')
 const downloadRouter = require('./routes/download')
 
@@ -24,7 +25,8 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/upload', uploadRouter)
+app.use('/comparison', comparisonRouter)
+app.use('/convert', convertRouter)
 app.use('/compare', compareRouter)
 app.use('/download', downloadRouter)
 
