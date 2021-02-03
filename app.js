@@ -9,6 +9,8 @@ const comparisonRouter = require('./routes/comparison')
 const convertRouter = require('./routes/convert')
 const compareRouter = require('./routes/compare')
 const downloadRouter = require('./routes/download')
+const harmonizedRouter = require('./routes/harmonized')
+const convertHarmonizedRouter = require('./routes/convert-harmonized')
 
 var app = express();
 
@@ -29,5 +31,7 @@ app.use('/comparison', comparisonRouter)
 app.use('/convert', convertRouter)
 app.use('/compare', compareRouter)
 app.use('/download', downloadRouter)
+app.use('/harmonized', harmonizedRouter)
+app.use('/convert-harmonized', convertHarmonizedRouter)
 
 module.exports = app
