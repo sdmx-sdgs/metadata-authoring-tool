@@ -13,7 +13,12 @@ router.post('/', upload.single('file'), async (req, res) => {
     res.setTimeout(90000)
     try {
         const indicator = req.file
-        const descriptors = req.body
+        const descriptors = {
+            REPORTING_TYPE: req.body.REPORTING_TYPE,
+            SERIES: req.body.SERIES,
+            REF_AREA: req.body.REF_AREA,
+            LANGUAGE: req.body.LANGUAGE,
+        }
 
         if (!indicator) {
             res.status(400).send({

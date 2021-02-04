@@ -19,7 +19,7 @@
     {% if action != '/convert-harmonized' %}
         <a href="/harmonized">Harmonized converter</a>
     {% else %}
-        <span>Harmonized converted</span>
+        <span>Harmonized converter</span>
     {% endif %}
 {% endblock %}
 
@@ -30,10 +30,14 @@
     {% if action == '/convert-harmonized' %}
         <script>var descriptors = {{ descriptors | dump | safe }};</script>
         <div class="descriptor-widget">
-            <label for="REPORTING_TYPE">Reporting type</label><select id="REPORTING_TYPE"></select>
-            <label for="SERIES">SDG series</label><select id="SERIES"></select>
-            <label for="REF_AREA">Reference area</label><select id="REF_AREA"></select>
-            <label for="LANGUAGE">Metadata language</label><select id="LANGUAGE" data-tags="true"></select>
+            <label for="REPORTING_TYPE">Reporting type</label>
+            <select id="REPORTING_TYPE" name="REPORTING_TYPE"></select>
+            <label for="SERIES">SDG series</label>
+            <select id="SERIES" name="SERIES"></select>
+            <label for="REF_AREA">Reference area</label>
+            <select id="REF_AREA" name="REF_AREA"></select>
+            <label for="LANGUAGE">Metadata language</label>
+            <select id="LANGUAGE" name="LANGUAGE"></select>
         </div>
     {% endif %}
 </form>
