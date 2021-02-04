@@ -18,6 +18,7 @@ if (typeof descriptors !== 'undefined') {
         });
         var config = {data: options};
         config.tags = descriptor.id === 'LANGUAGE';
+        config.multiple = descriptor.id === 'SERIES';
         $('#' + descriptor.id)
             .attr('name', descriptor.id)
             .select2(config);
