@@ -35,3 +35,6 @@ nav a {
 .descriptor-widget {
   margin-bottom: 40px;
 }
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  display: block;
+}
