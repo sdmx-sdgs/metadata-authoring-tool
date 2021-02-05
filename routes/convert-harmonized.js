@@ -27,7 +27,9 @@ router.post('/', upload.single('file'), async (req, res) => {
             })
         }
         else {
-            const input = new HarmonizedWordTemplateInput()
+            const input = new HarmonizedWordTemplateInput({
+                normalizeWhitespace: true,
+            })
             const sdmxOutput = new SdmxOutput()
             const pdfOutput = new PdfOutput({
                 conceptNames: true,
