@@ -21,10 +21,10 @@ router.post('/', upload.single('file'), async (req, res) => {
         }
 
         if (!indicator) {
-            res.status(400).send({
-                status: false,
-                data: 'No indicators were sent',
-            })
+            res.status(400).send('No indicators were sent')
+        }
+        else if (!descriptors.SERIES) {
+            res.status(400).send('Please choose one or more SDG series and then try again.')
         }
         else {
             const input = new HarmonizedWordTemplateInput({
