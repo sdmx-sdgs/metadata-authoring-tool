@@ -84,6 +84,11 @@
                 margin-bottom: 0;
                 padding-bottom: 10px;
             }
+            {% if rightToLeft %}
+            body {
+                direction: rtl;
+            }
+            {% endif %}
         </style>
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -92,7 +97,7 @@
         {% macro renderConcept(concept) %}
         {% if concept.value %}
             <div id="{{ concept.id }}">
-            {% if conceptNames %}<p class="concept-name">{{ concept.name }}</p>{% endif %}
+            {% if conceptNames %}<p class="concept-name">{{ conceptTranslations[concept.id] | default(concept.name, true) }}</p>{% endif %}
             {{ concept.value }}
             </div>
         {% endif %}
