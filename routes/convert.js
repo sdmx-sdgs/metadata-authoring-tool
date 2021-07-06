@@ -4,6 +4,7 @@ const multer = require('multer')
 const { WordTemplateInput, SdmxOutput, PdfOutput, SdmxInput } = require('sdg-metadata-convert')
 const router = express.Router()
 const helpers = require('../lib/helpers')
+const conceptTranslations = require('../lib/conceptTranslations').getConceptTranslations()
 
 const upload = multer({
     dest: 'user_uploads/'
@@ -25,6 +26,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             const sdmxOutput = new SdmxOutput()
             const pdfOutput = new PdfOutput({
                 conceptNames: true,
+                conceptTranslations: conceptTranslations,
                 puppeteerLaunchOptions: helpers.getPuppeteerLaunchOptions(),
                 layoutFolder: path.join(__dirname, '..', 'views'),
                 layout: 'pdf-output.njk',
