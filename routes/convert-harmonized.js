@@ -51,6 +51,9 @@ router.post('/', upload.single('file'), async (req, res) => {
                 .then(metadata => pdfOutput.write(metadata, pdfTempFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
+                    if (!metadata.validateMetaLastUpdate()) {
+                        messages.push('META_LAST_UPDATE is in the wrong format. Please use: YYYY-MM-DD')
+                    }
                     return helpers.zipOutputFiles(zipTempFile, [
                         {
                             from: sdmxTempFile,
