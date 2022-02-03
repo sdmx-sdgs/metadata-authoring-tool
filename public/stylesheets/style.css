@@ -38,3 +38,7 @@ nav a {
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
   display: block;
 }
+
+#errors {
+  color: red;
+}

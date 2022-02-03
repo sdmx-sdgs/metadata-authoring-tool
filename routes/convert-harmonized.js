@@ -46,13 +46,14 @@ router.post('/', upload.single('file'), async (req, res) => {
             const pdfDestFile = helpers.convertFilename(indicator.originalname, '.pdf')
 
             let messages
+            let errors = []
             input.read(indicator.path, descriptors)
                 .then(metadata => sdmxOutput.write(metadata, sdmxTempFile))
                 .then(metadata => pdfOutput.write(metadata, pdfTempFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
                     if (!metadata.validateMetaLastUpdate()) {
-                        messages.push('Please provide the date of last update in the format YYYY-MM-DD')
+                        errors.push('Please provide the date of last update in the format YYYY-MM-DD')
                     }
                     return helpers.zipOutputFiles(zipTempFile, [
                         {
@@ -65,18 +66,26 @@ router.post('/', upload.single('file'), async (req, res) => {
                         }
                     ])
                 })
-                .then(() => res.send({
-                    status: true,
-                    message: 'Indicator successfully converted.',
-                    data: {
-                        filePath: zipTempFile,
-                        downloadName: zipDestFile,
-                        warnings: messages,
+                .then(() => {
+                    if (errors.length > 0) {
+                        throw errors;
                     }
-                }))
+                    res.send({
+                        status: true,
+                        message: 'Indicator successfully converted.',
+                        data: {
+                            filePath: zipTempFile,
+                            downloadName: zipDestFile,
+                            warnings: messages,
+                        }
+                    })
+                })
                 .catch(err => {
                     console.log(err)
-                    res.status(500).send(err)
+                    res.status(500).send({
+                        warnings: messages,
+                        errors: err,
+                    })
                 })
         }
     }
