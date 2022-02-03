@@ -52,6 +52,7 @@ router.post('/', upload.single('file'), async (req, res) => {
                 .then(metadata => pdfOutput.write(metadata, pdfTempFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
+                    metadata.fixMetaLastUpdate()
                     if (!metadata.validateMetaLastUpdate()) {
                         errors.push('Please provide the date of last update in the format YYYY-MM-DD')
                     }
