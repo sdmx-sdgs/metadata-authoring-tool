@@ -42,11 +42,13 @@ router.post('/', upload.single('file'), async (req, res) => {
             let messages
             let errors = []
             input.read(indicator.path)
-                .then(metadata => sdmxOutput.write(metadata, sdmxTempFile))
+                .then(metadata => {
+                    metadata.fixMetaLastUpdate()
+                    return sdmxOutput.write(metadata, sdmxTempFile)
+                })
                 .then(metadata => pdfOutput.write(metadata, pdfTempFile))
                 .then(metadata => {
                     messages = metadata.getMessages()
-                    metadata.fixMetaLastUpdate()
                     if (!metadata.validateMetaLastUpdate()) {
                         errors.push('Please provide the date of last update in the format YYYY-MM-DD')
                     }
