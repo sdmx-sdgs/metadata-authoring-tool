@@ -13,7 +13,7 @@
     "morgan": "~1.9.1",
     "multer": "1.4.2",
     "nunjucks": "3.2.1",
-    "sdg-metadata-convert": "github:brockfanning/sdg-metadata-convert#authoring-tool-testing-features",
+    "sdg-metadata-convert": "github:worldbank/sdg-metadata-convert#0.9.0",
     "yazl": "2.5.1"
   }
 }
