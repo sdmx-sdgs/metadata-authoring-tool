@@ -49,6 +49,12 @@
 <div id="filename"></div>
 <div id="errors"></div>
 <div id="warnings"></div>
+
+{% if action == '/convert-harmonized' %}
+<p class="last-refreshed">
+    SDG series and Reference area options last refreshed: {{ timestamp }}
+</p>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

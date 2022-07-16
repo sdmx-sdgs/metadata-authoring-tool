@@ -9,6 +9,7 @@ router.get('/', async function(req, res, next) {
     action: '/convert-harmonized',
     introduction: 'Use this tool to convert your harmonized metadata into SDMX.',
     descriptors: await descriptorStoreLive.getDescriptors(),
+    timestamp: new Date(await descriptorStoreLive.getCacheTimestamp()).toLocaleString(),
   })
 })
 
